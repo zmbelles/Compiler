@@ -24,6 +24,9 @@ class LexAnalyzer{
     public:
 
     LexAnalyzer(istream& infile){}
+    // pre: parameter refers to an open data file consisting of token and
+    // lexeme pairs i.e.  s_and and t_begin begin t_int 27.  Each pair    // appears on its own input line.
+    // post: tokenmap has been populated
         
     void scanFile(istream& infile, ostream& outfile);
     // pre: 1st parameter refers to an open text file that contains source
