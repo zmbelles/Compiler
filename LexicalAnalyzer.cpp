@@ -29,14 +29,20 @@ class LexAnalyzer{
         // post: tokenmap has been populated
         string thisToken;
         string lex;
+        
+        infile >> lex;
+        infile >> thisToken;
         while(!infile.eof()){
+            tokenmap.insert(pair<string,string>(lex, thisToken));
             infile >> lex;
             infile >> thisToken;
-            tokenmap.insert(pair<string,string>(lex, thisToken));
-            
         }
-        
+        map<string, string>::iterator mitr;
+        for(mitr = tokenmap.begin(); mitr != tokenmap.end(); ++mitr){
+            cout << mitr->first << " " << mitr->second << endl;
+        }
     }
+    
         
     void scanFile(istream& infile, ostream& outfile);
     // pre: 1st parameter refers to an open text file that contains source
