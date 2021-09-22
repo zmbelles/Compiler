@@ -23,10 +23,20 @@ class LexAnalyzer{
         // other private methods
     public:
 
-    LexAnalyzer(istream& infile){}
-    // pre: parameter refers to an open data file consisting of token and
-    // lexeme pairs i.e.  s_and and t_begin begin t_int 27.  Each pair    // appears on its own input line.
-    // post: tokenmap has been populated
+    LexAnalyzer(istream& infile){
+        // pre: parameter refers to an open data file consisting of token and
+        // lexeme pairs i.e.  s_and and t_begin begin t_int 27.  Each pair    // appears on its own input line.
+        // post: tokenmap has been populated
+        string thisToken;
+        string lex;
+        while(!infile.eof()){
+            infile >> lex;
+            infile >> thisToken;
+            tokenmap.insert(pair<string,string>(lex, thisToken));
+            
+        }
+        
+    }
         
     void scanFile(istream& infile, ostream& outfile);
     // pre: 1st parameter refers to an open text file that contains source
@@ -41,10 +51,12 @@ class LexAnalyzer{
 
 int main () {
     filebuf fb;
-    cout << "Please enter the name of the file you wish to compile: ";
-    string fileName;
-    cin >> fileName;
-    fb.open(fileName, ios::in);
+//    cout << "Please enter the name of the file you wish to compile: ";
+//    string fileName;
+//    cin >> fileName;
+    
+    cout << endl;
+    fb.open("token.txt", ios::in);
     
     istream infile(&fb);
     
