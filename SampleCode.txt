@@ -1,0 +1,4 @@
+main()						
+ begin				
+   output(“hello world);	
+   end main;	
