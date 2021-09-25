@@ -5,10 +5,6 @@
 //  Created by Zach Belles on 9/21/21.
 //
 
-
-//test edit
-//test edit 2
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -100,21 +96,14 @@ class LexAnalyzer{
 
 
 int main () {
-    filebuf fb;
-    
-    cout << endl;
-    fb.open("token.txt", ios::in);
-    
-    istream infile(&fb);
-    
-    LexAnalyzer LA(infile);
-    fb.close();
-    //    cout << "Please enter the name of the file you wish to compile: ";
-    //    string fileName;
-    //    cin >> fileName;
-    fb.open("SampleCode.txt", ios::in);
-    LA.scanFile(<#istream &infile#>, <#ostream &outfile#>)
-    
-    
-    return 0;
+    ifstream tokens;
+    tokens.open("token.txt");
+    LexAnalyzer la(tokens);
+    tokens.close();
+    cout << "source code file name: ";
+    string sourceString;
+    sourceString = cin.get();
+    ofstream outFile;
+    outFile.open("OutputFile.txt");
+    la.scanFile(<#istream &infile#>, <#ostream &outfile#>);
 }
