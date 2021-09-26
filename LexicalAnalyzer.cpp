@@ -5,10 +5,6 @@
 //  Created by Zach Belles on 9/21/21.
 //
 
-
-//test edit
-//test edit 2
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -25,22 +21,22 @@ class LexAnalyzer{
         vector<string> tokens;   // source code file tokens
         map<string, string> tokenmap;  // valid lexeme/token pairs
         // other private methods
-    bool symbolChecker(string symbol){
-        bool missingPair = false;
+        bool symbolChecker(string symbol){
+            bool missingPair = false;
         
         
-        return missingPair;
-    }
-    /*
-     pre:
-        param: an empty file
-     post:
-        file populated with each key value pair in chronological order of source code
-     */
-        
-    void writeToFile(istream& oFile){
-        
-    }
+            return missingPair;
+        }
+        /*
+         pre:
+            param: an empty file
+         post:
+            file populated with each key value pair in chronological order of source code
+         */
+            
+        void writeToFile(istream& oFile){
+            
+        }
     public:
 
     LexAnalyzer(istream& infile){
@@ -53,7 +49,7 @@ class LexAnalyzer{
         infile >> lex;
         infile >> thisToken;
         while(!infile.eof()){
-            tokenmap.insert(pair<string,string>(lex, thisToken));
+            tokenmap.insert(pair<string,string>(thisToken, lex));
             infile >> lex;
             infile >> thisToken;
         }
@@ -68,25 +64,34 @@ class LexAnalyzer{
     
     //DO NOT CARE ABOUT SYNTAX
     void scanFile(istream& infile, ostream& outfile){
+        // pre: 1st parameter refers to an open text file that contains source
+        // code in the language, 2nd parameter refers to an open empty output
+        // file
+        // post: If no error, the token and lexeme pairs for the given input
+        // file have been written to the output file and the vectors have been
+        // populated.  If there is an error, incomplete token/lexeme pairs are
+        // written to the output file and populated in the vectors.  An error
+        // message is also written to the file. A success or fail message has
+        // printed to the console.
         
-        string thisSegment;
-        infile >> thisSegment;
-        map<string, string>::iterator mitr;
-            for(mitr = tokenmap.begin(); mitr != tokenmap.end(); ++mitr){
-                if(thisSegment == mitr->second){
+        string thisLex;
+        infile >> thisLex;
+        map<string,string>::iterator mitr;
+        while(!infile.eof()){
+            for(mitr=tokenmap.begin(); mitr != tokenmap.end(); mitr++){
+                string thisCode = mitr-> first;
+                if(thisLex.find(thisCode) != -1){
                     cout << "we're here" << endl;
                 }
             }
+            
+            
+            infile >> thisLex;
+        }
+        
     }
     
-    // pre: 1st parameter refers to an open text file that contains source
-    // code in the language, 2nd parameter refers to an open empty output
-    // file
-    // post: If no error, the token and lexeme pairs for the given input
-    // file have been written to the output file and the vectors have been // populated.  If there is an error, incomplete token/lexeme pairs are
-    // written to the output file and populated in the vectors.  An error // message is also written to the file. A success or fail message has // printed to the console.
-    
-    /*
+        /*
      what is needed?
     
      each line needs:
@@ -100,21 +105,19 @@ class LexAnalyzer{
 
 
 int main () {
-    filebuf fb;
-    
-    cout << endl;
-    fb.open("token.txt", ios::in);
-    
-    istream infile(&fb);
-    
-    LexAnalyzer LA(infile);
-    fb.close();
-    //    cout << "Please enter the name of the file you wish to compile: ";
-    //    string fileName;
-    //    cin >> fileName;
-    fb.open("SampleCode.txt", ios::in);
-    LA.scanFile(<#istream &infile#>, <#ostream &outfile#>)
-    
-    
-    return 0;
+    ifstream tokenFile;
+    tokenFile.open("token.txt");
+    LexAnalyzer la(tokenFile);
+    /*
+    cout << "source code file name: ";
+    string sourceString;
+    sourceString = cin.get();
+    ofstream outFile;
+    outFile.open("OutputFile.txt");
+     */
+    ifstream sourceCode;
+    sourceCode.open("SampleCode.txt");
+    ofstream outFile;
+    outFile.open("OutputFile.txt");
+    la.scanFile(sourceCode, outFile);
 }
