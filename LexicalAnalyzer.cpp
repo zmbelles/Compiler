@@ -17,26 +17,72 @@ class LexAnalyzer{
     
     private:
     
-        vector<string> lexemes;  // source code file lexemes
-        vector<string> tokens;   // source code file tokens
-        map<string, string> tokenmap;  // valid lexeme/token pairs
-        // other private methods
-        bool symbolChecker(string symbol){
-            bool missingPair = false;
+    vector<string> lexemes;  // source code file lexemes
+    vector<string> tokens;   // source code file tokens
+    map<string, string> tokenmap;  // valid lexeme/token pairs
+    // other private methods
+    bool symbolChecker(string symbol){
+        bool missingPair = false;
+    
+    
+        return missingPair;
+    }
+    /*
+     pre:
+        param: an empty file
+     post:
+        file populated with each key value pair in chronological order of source code
+     */
         
+    void writeToFile(istream& oFile){
         
-            return missingPair;
+    }
+    int findPairs(const string& thisCode, const string& thisLex){
+        
+        int done;
+        done = thisCode.find(thisLex);
+        if(done != -1){
+            if(thisCode == thisLex){
+                done = 0;
+            }
+            else{
+                done = 1;
+            }
         }
-        /*
-         pre:
-            param: an empty file
-         post:
-            file populated with each key value pair in chronological order of source code
-         */
-            
-        void writeToFile(istream& oFile){
-            
+        return done;
+    }
+    
+    void splitString(string& thisCode, ostream& outFile){
+        bool found = false;
+        string alpha = "qwertyuiopasdfghjklzxcvbnm";
+        for(int i=0; i<thisCode.size(); i++){
+            for(int j=0; j<alpha.size(); j++){
+                if(thisCode[i]==alpha[j]){
+                    found = true;
+                    break;
+                }
+            }
+            if(found == false){
+                char code = thisCode[i];
+                string newCode(1, code);
+                map<string, string>::iterator mitr;
+                for(mitr=tokenmap.begin(); mitr != tokenmap.end(); ++mitr){
+                    string thisLex = mitr->first;
+                    int done = findPairs(newCode, thisLex);
+                    if(done == 0){
+                        thisLex = mitr->second;
+                        outFile << thisLex << " : " << newCode << endl;
+                        cout << "yerp" << endl;
+
+                    }
+                }
+            }
+            found = false;
         }
+        
+    }
+    
+    
     public:
 
     LexAnalyzer(istream& infile){
@@ -74,21 +120,23 @@ class LexAnalyzer{
         // message is also written to the file. A success or fail message has
         // printed to the console.
         
+        string thisCode;
         string thisLex;
-        infile >> thisLex;
-        map<string,string>::iterator mitr;
+        infile >> thisCode;
         while(!infile.eof()){
+            
+            map<string, string>::iterator mitr;
             for(mitr=tokenmap.begin(); mitr != tokenmap.end(); mitr++){
-                string thisCode = mitr-> first;
-                if(thisLex.find(thisCode) != -1){
-                    cout << "we're here" << endl;
+                thisLex = mitr->first;
+                int done = findPairs(thisCode, thisLex);
+                if(done == 0){
+                    outfile << thisLex << " : " << thisCode << endl;
+                }
+                else if(done == 1){
+                    splitString(thisCode, outfile);
                 }
             }
-            
-            
-            infile >> thisLex;
         }
-        
     }
     
         /*
