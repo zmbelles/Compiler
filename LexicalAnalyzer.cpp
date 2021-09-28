@@ -20,68 +20,49 @@ class LexAnalyzer{
     vector<string> lexemes;  // source code file lexemes
     vector<string> tokens;   // source code file tokens
     map<string, string> tokenmap;  // valid lexeme/token pairs
-    // other private methods
-    bool symbolChecker(string symbol){
-        bool missingPair = false;
     
-    
-        return missingPair;
-    }
-    /*
-     pre:
-        param: an empty file
-     post:
-        file populated with each key value pair in chronological order of source code
-     */
-        
-    void writeToFile(istream& oFile){
-        
-    }
-    int findPairs(const string& thisCode, const string& thisLex){
-        
-        int done;
-        done = thisCode.find(thisLex);
-        if(done != -1){
+    bool checkMap(string& thisLex, string& thisCode, ostream& outfile){
+        bool added = false;
+        map<string, string>::iterator mitr;
+        for(mitr=tokenmap.begin(); mitr != tokenmap.end(); mitr++){
+            thisLex = mitr->first;
             if(thisCode == thisLex){
-                done = 0;
+                thisLex = mitr->second;
+                outfile << thisLex << " : " << thisCode << endl;
+                added = true;
+            }
+        }
+        return added;
+    }
+
+    string concatString(string& thisCode, ostream& outfile){
+        string codeConcat;
+        string thisLex;
+        bool endOfString = true;
+        for(int i=0; i< thisCode.size(); i++){
+            char thisChar = thisCode[i];
+            if(!isalpha(thisChar)){
+                if((thisChar == '"' || thisChar == '\'')&& !endOfString){
+                    endOfString = true;
+                    //may need implimentation of a loop in another func to grab all the string
+                }
+                if(thisChar == '"' || thisChar == '\''){
+                    endOfString =false;
+                }
+                string codeSeg(1, thisChar);
+                bool added = checkMap(thisLex, codeSeg, outfile);
+                if(!added){
+                    cout << "an unexpected error occured" << endl;
+                    string why;
+                    cin >> why;
+                }
             }
             else{
-                done = 1;
+                codeConcat += thisCode[i];
             }
         }
-        return done;
+        return codeConcat;
     }
-    
-    void splitString(string& thisCode, ostream& outFile){
-        bool found = false;
-        string alpha = "qwertyuiopasdfghjklzxcvbnm";
-        for(int i=0; i<thisCode.size(); i++){
-            for(int j=0; j<alpha.size(); j++){
-                if(thisCode[i]==alpha[j]){
-                    found = true;
-                    break;
-                }
-            }
-            if(found == false){
-                char code = thisCode[i];
-                string newCode(1, code);
-                map<string, string>::iterator mitr;
-                for(mitr=tokenmap.begin(); mitr != tokenmap.end(); ++mitr){
-                    string thisLex = mitr->first;
-                    int done = findPairs(newCode, thisLex);
-                    if(done == 0){
-                        thisLex = mitr->second;
-                        outFile << thisLex << " : " << newCode << endl;
-                        cout << "yerp" << endl;
-
-                    }
-                }
-            }
-            found = false;
-        }
-        
-    }
-    
     
     public:
 
@@ -99,13 +80,6 @@ class LexAnalyzer{
             infile >> lex;
             infile >> thisToken;
         }
-        
-        //may need later
-        
-//        map<string, string>::iterator mitr;
-//        for(mitr = tokenmap.begin(); mitr != tokenmap.end(); ++mitr){
-//            cout << mitr->first << " " << mitr->second << endl;
-//        }
     }
     
     //DO NOT CARE ABOUT SYNTAX
@@ -121,36 +95,16 @@ class LexAnalyzer{
         // printed to the console.
         
         string thisCode;
+        string wordToken;
         string thisLex;
         infile >> thisCode;
         while(!infile.eof()){
-            
-            map<string, string>::iterator mitr;
-            for(mitr=tokenmap.begin(); mitr != tokenmap.end(); mitr++){
-                thisLex = mitr->first;
-                int done = findPairs(thisCode, thisLex);
-                if(done == 0){
-                    outfile << thisLex << " : " << thisCode << endl;
-                }
-                else if(done == 1){
-                    splitString(thisCode, outfile);
-                }
-            }
+            string wordToken = concatString(thisCode, outfile);
+            checkMap(thisLex, wordToken, outfile);
+            infile >> thisCode;
         }
     }
-    
-        /*
-     what is needed?
-    
-     each line needs:
-     
-        if '(', check for ')'
-        if '"', check for '"'
-        
-     Check each symbol/string/int against its key, value pair
-     */
 };
-
 
 int main () {
     ifstream tokenFile;
