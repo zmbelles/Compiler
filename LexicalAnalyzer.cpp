@@ -20,7 +20,14 @@ class LexAnalyzer{
     vector<string> lexemes;  // source code file lexemes
     vector<string> tokens;   // source code file tokens
     map<string, string> tokenmap;  // valid lexeme/token pairs
-    
+    /*
+     pre:
+        param 1: an string to hold each lexeme
+        param 2: the segment of code to be checked
+        param 3: the outputfile to write to
+     post:
+        thisCode is found in thisLex, and paired with mitr->second in outfile
+     */
     bool checkMap(string& thisLex, string& thisCode, ostream& outfile){
         bool added = false;
         map<string, string>::iterator mitr;
@@ -34,8 +41,28 @@ class LexAnalyzer{
         }
         return added;
     }
-
-    string concatString(string& thisCode, ostream& outfile){
+    bool findStringFull(string thisCode, ostream& outfile){
+        char thisChar;
+        bool eos = false;
+        string fullString;
+        for(int i=0; i<thisCode.size(); i++){
+            thisChar = thisCode[i];
+            if(thisChar == '"'){
+                eos == true;
+                outfile << "t_str" << fullString;
+            }
+            fullString += thisChar;
+        }
+        return eos;
+    }
+    /*
+     pre:
+        param 1: the segment of code to be concatinated and checked
+        param 2: the output file to pass to checkMap when needed
+     post:
+        the keyword/string is passed back to the function that called it with operators posted to outfile
+     */
+    string concatSourceCode(string& thisCode, ostream& outfile, istream& infile){
         string codeConcat;
         string thisLex;
         bool endOfString = true;
@@ -43,11 +70,11 @@ class LexAnalyzer{
             char thisChar = thisCode[i];
             if(!isalpha(thisChar)){
                 if((thisChar == '"' || thisChar == '\'')&& !endOfString){
-                    endOfString = true;
-                    //may need implimentation of a loop in another func to grab all the string
-                }
-                if(thisChar == '"' || thisChar == '\''){
-                    endOfString =false;
+                    bool eos = findStringFull(thisCode, outfile);
+                    if(!eos){
+                        cout << "Compiliation Error: No end quotation of string" << endl;
+                        outfile << "Compiliation Error: No end quotation of string" << endl;
+                    }
                 }
                 string codeSeg(1, thisChar);
                 bool added = checkMap(thisLex, codeSeg, outfile);
@@ -68,7 +95,8 @@ class LexAnalyzer{
 
     LexAnalyzer(istream& infile){
         // pre: parameter refers to an open data file consisting of token and
-        // lexeme pairs i.e.  s_and and t_begin begin t_int 27.  Each pair    // appears on its own input line.
+        // lexeme pairs i.e.  s_and and t_begin begin t_int 27.  Each pair
+        // appears on its own input line.
         // post: tokenmap has been populated
         string thisToken;
         string lex;
@@ -97,9 +125,8 @@ class LexAnalyzer{
         string thisCode;
         string wordToken;
         string thisLex;
-        infile >> thisCode;
-        while(!infile.eof()){
-            string wordToken = concatString(thisCode, outfile);
+        while(getline(infile, thisCode)){
+            string wordToken = concatSourceCode(thisCode, outfile, infile);
             checkMap(thisLex, wordToken, outfile);
             infile >> thisCode;
         }
